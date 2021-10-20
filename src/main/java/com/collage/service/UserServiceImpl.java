@@ -83,7 +83,8 @@ public class UserServiceImpl implements UserService{
 			
 			userEntity.setEmailId(user.getEmailId());
 			userEntity.setContact(user.getContact());
-			
+			userEntity.setActive(true);
+			userEntity.setRoles(user.getRoles());
 			String hashedPassword = HashingUtility.getHashValue(user.getPassword());
 			userEntity.setPassword(hashedPassword);
 			repo.save(userEntity);
