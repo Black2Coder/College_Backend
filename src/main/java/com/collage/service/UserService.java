@@ -12,6 +12,6 @@ public interface UserService  {
 	public User authenticateUser(String contact, String password) throws Exception;
 	public String registerUser(User user) throws Exception;
 	public String post(Post post) throws Exception;
-	public User loginUser(String contact, String password) throws Exception;
+	public Users loginUser(String contact, String password) throws Exception;
 
 }

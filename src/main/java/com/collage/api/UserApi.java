@@ -2,13 +2,12 @@ package com.collage.api;
 
 import java.io.IOException;
 import java.security.Principal;
-import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import javax.persistence.PersistenceException;
+
 
 
 import com.collage.dto.GroupUserRepository;
@@ -16,7 +15,6 @@ import com.collage.model.AuthRequest;
 import com.collage.model.TokenResponse;
 import com.collage.service.GroupUserDetailService;
 import com.collage.utility.AccessRole;
-import com.collage.utility.HashingUtility;
 import com.collage.utility.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
@@ -45,10 +43,9 @@ import com.collage.model.User;
 import com.collage.service.UserService;
 
 
-
+@CrossOrigin(origins="http://localhost:4200")
 @RestController
-@RequestMapping
-@CrossOrigin( origins="*")
+ 
 public class UserApi {
 
 
@@ -85,15 +82,17 @@ public class UserApi {
 	}
 	
 	@RequestMapping(value="/login", method = RequestMethod.POST)
-	public ResponseEntity<User> loginUser(@RequestBody User user) throws Exception{
+	public ResponseEntity<?> loginUser(@RequestBody User user) throws Exception{
 		
 		if(user.getContact() ==null && user.getPassword()==null ) {
 //			throw new Exception("Contact or password cann't be null");
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Contact or password cann't be null");
 		}
 		else {
-		User userDB = userService.loginUser(user.getContact(), user.getPassword());
-		return new ResponseEntity<>(userDB, HttpStatus.OK);
+			System.out.println(user.getPassword());
+		Users userDB = userService.loginUser(user.getContact(), user.getPassword());
+		String token = jwtUtil.generateToken(user.getContact());
+		return ResponseEntity.ok(new TokenResponse(token));
 		}
 	}
 	
@@ -154,6 +153,8 @@ public class UserApi {
 			throw new Exception("Access Denied");
 		}
 	}
+	
+	
 	@RequestMapping(value= "post", method = RequestMethod.GET)
 	public List<PostEntity> getPost(){
 		return postRepo.findAll();
@@ -183,13 +184,22 @@ public class UserApi {
 			);
 		}
 		catch (Exception ex){
-			throw new Exception( "Invalid Contact/Password");
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid Contact/Password");
 		}
-		UserDetails userDetails = this.groupUserDetailService.loadUserByUsername(auth.getContact());
+		
 		String token = jwtUtil.generateToken(auth.getContact());
 		return ResponseEntity.ok(new TokenResponse(token));
 	}
 	
+	@RequestMapping(value="/current-user", method=RequestMethod.GET)
+	public Users getLoggedUser(Principal principal) {
+		
+		UserDetails userDetails= this.groupUserDetailService.loadUserByUsername(principal.getName());
+		
+		Users user =repo.findByContact(principal.getName());
+		
+		return user;
+	}
 	
 	@RequestMapping(value="/home", method=RequestMethod.GET)
 	public List<Users> home() {

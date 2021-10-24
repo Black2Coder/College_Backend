@@ -64,13 +64,17 @@ public class UserServiceImpl implements UserService{
 	}
 	
 	@Override
-	public User loginUser(String contact, String password) throws Exception {
-		
-		String hashedPassword = HashingUtility.getHashValue(password);
-		User user = repo.findByContactAndPassword(contact, hashedPassword);
-		
-		return user;
-		
+	public Users loginUser(String contact, String password) throws Exception {
+		try {
+			Validation.validateUserForLogin(contact, password);
+			String hashedPassword = HashingUtility.getHashValue(password);
+			Users user = repo.findByContactAndPassword(contact, hashedPassword);
+//			user.setPassword(null);
+			return user;
+		}
+		catch(Exception ex) {
+			throw  new Exception(ex.getMessage());
+		}
 	}
 	
 	@Override

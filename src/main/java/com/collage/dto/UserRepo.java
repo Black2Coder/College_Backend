@@ -10,7 +10,7 @@ import java.util.Optional;
 
 
 public interface UserRepo extends JpaRepository<Users, Integer>{
-	public User findByContactAndPassword(String contact, String Password);
+	public Users findByContactAndPassword(String contact, String Password);
 
 	Users findByContact(String contact);
 

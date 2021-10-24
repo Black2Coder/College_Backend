@@ -30,3 +30,10 @@ DOC_NAME VARCHAR(100) NOT NULL,
 
 SELECT * FROM USERS;
 SELECT * FROM POST;
+insert into post(title, description) values('Bunk', 'Mam is absent today');
+insert into post(title, description) values('Python notes', 'Unit test 1');
+insert into post(title, description) values('C# notes', 'Unit test 1');
+insert into post(title, description) values('.NET notes', 'Unit test 1');
+insert into post(title, description) values('SeaSIONS Preparation', 'EveryOne come to Quadrangle');
+insert into post(title, description) values('TCS comne tommorow for Placement', 'TCS for TYIT Link -- https//tcsportal.com');
+
